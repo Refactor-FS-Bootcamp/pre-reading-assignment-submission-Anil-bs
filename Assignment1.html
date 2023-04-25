@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Document</title>
+    <style>
+        .card-link1{
+            text-decoration: none;
+            background-color:green;
+            color: white;
+            font-size: 20px;
+        }
+        .card-link{
+            text-decoration: none;
+            background-color: red;
+            color: white;
+            font-size: 20px;
+        }
+        h2{
+            text-align: center;
+        }
+        .title{
+            font-size: 20px;
+        }
+        .note{
+            font-size: 15px;
+        }
+    </style>
+</head>
+<body onload="ShowData()">
+    <div class="container mt-5">
+        <h2>Your Privacy In Your Hand</h2>
+        <form>
+            <div style="border:40px black solid; background-color: black;">
+            <div class="mb-3" >
+                <input style="height:50%; width:100%;"
+                    type="text"
+                    class="form-control"
+                    id="title"
+                    placeholder="Title"
+                /><br><br>
+            </div>
+            <div class="mb-3" style="border: black solid; background-color: black;">
+                <textarea
+                    style="height: 50px; width: 100%;"
+                    type="text"
+                    class="form-control"
+                    id="textNote"
+                    placeholder="Your notes"
+                ></textarea>
+            </div>
+            <input type="text" hidden class="id" />
+            <br>
+            <button
+            style="background-color: blue; color: white; font-size: 20px;"
+                type="submit"
+                value="Add Notes"
+                id="btn"
+                onclick="Add()"
+            ></button>
+        </div>
+        <h3>Your Notes</h3>
+        </form>
+        <p id="noData">No data use "Add Notes" button to create notes</p>
+        <div class="card" style="width: 10rem" id="card"></div>
+    </div>
+    
+    <script>
+        let id = 1;
+        let data = [{ id: id++, title: " ", note: " " }];
+        //for displaying data
+        let noData = document.getElementById("noData");
+        function ShowData() {
+            noData.remove();
+            localStorage.setItem("object", JSON.stringify(data));
+            let cardData = document.getElementById("card");
+            let object = localStorage.getItem("object");
+            let objectData = JSON.parse(object);
+            let html = "";
+            objectData.forEach((ele) => {
+                html += ` <div class="card-body">
+                    <h5 class="title">${ele.title}</h5>
+                    <h6 class="note">${ele.note}</h6>
+                    
+                    <a href="#" class="card-link1" onclick=(edit(${ele.id}))>Edit</a>
+                    <a href="#" class="card-link" onclick=(datadelede(${ele.id}))>Delete</a>
+                </div>`;
+            });
+            cardData.innerHTML = html;
+        }
+        let flag = "false";
+        const button = document.getElementById("btn");
+        button.innerText = "Add Notes";
+        function Add() {
+            //for inserting
+
+            if (flag === "false") {
+                let title = document.getElementById("title").value;
+                let note = document.getElementById("textNote").value;
+                if (title === "" || note === "") {
+                    alert("Please fill all the value");
+                } else {
+                    let obj = { id: id++, title: title, note: note };
+                    data.push(obj);
+                    ShowData();
+                }
+            }
+
+            //for updating
+            if (flag === "true") {
+                let id = parseInt(dataid);
+                let title = document.getElementById("title").value;
+                let note = document.getElementById("textNote").value;
+                let ind = data.findIndex((ele) => ele.id === id);
+                data[ind] = { id, title, note };
+                flag = "false";
+                ShowData();
+                button.innerText = "Add Notes";
+            }
+            document.getElementById("title").value = "";
+            document.getElementById("textNote").value = "";
+        }
+        let dataid;
+        function edit(id) {
+            let objdata = data.find((ele) => ele.id === id);
+            document.getElementById("title").value = objdata.title;
+            document.getElementById("textNote").value = objdata.note;
+            flag = "true";
+            dataid = id;
+            button.innerText = "Update";
+        }
+        function Update() {
+            let id = parseInt(document.getElementById("id").value);
+            let title = document.getElementById("title").value;
+            let note = document.getElementById("id").value;
+            let ind = data.findIndex((ele) => ele.id === id);
+            data[ind] = { id, title, note };
+            ShowData();
+        }
+        function datadelede(id) {
+            data = data.filter((rec) => rec.id != id);
+            ShowData();
+        }
+
+    </script>
+</body>
+</html>
